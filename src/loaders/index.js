@@ -1,30 +1,29 @@
-// import expressLoader from './express';
-// import knexLoader from './knexfile';
-// import mongooseLoader from './mongoose';
-
 const expressLoader = require('./express');
 const mongooseLoader = require('./mongoose');
 const knexLoader = require('./knexfile'); 
-
-
-
-console.log(">>>> in Loaders Index file")
 // import Logger from './logger';
 // //We have to import at least all the events once so they can be triggered
 // import './events';
 
 
 exports.runLoaders = async ({ expressApp }) => {   // NONE OF THIS EVER SEEMS TO LOG!!!! 
-    // await expressLoader({ app: expressApp });
+    console.log("Calling Express Loader from Loaders index ---- ")
     await expressLoader.connectExpressWebServer({ app: expressApp });
     
-    console.log("Calling MongoDB Loader from Loaders index ---- ")
     const mongoConnection = await mongooseLoader.connectMongoDb( {app : expressApp});  // Pass in param or no???  REFACTOR TO!!!    
     console.log('MongoDB Intialized from Loaders');
 
     const sqlConnection = await knexLoader();
     console.log('SQL aka Knex DB connection Intialized from Loaders');
 };
+
+
+
+
+
+
+
+
 
 
 // export default async ({ expressApp }) => {
