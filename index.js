@@ -1,12 +1,24 @@
 
 // import Logger from './loaders/logger';
 // const config = require('./config');
-let config = {"port" : 3000}
 const express = require('express');
+const app = express();      // should import the app module instead??? 
+const loadersFile = require('./src/loaders')//.default({ app });
+console.log("loadersFile is : ", loadersFile);
+// let config = {"port" : 7555}
+
+
+
+// const loaders = await require('./src/loaders').default({ app });  // TypeError: require(...).default is not a functio
+
+// async function loadLoadersFile() {
+//     console.log("in loadLoadersFile")
+//     await require('./src/loaders').default({ app });
+// }
 
 async function startServer() {
     console.log("in startServer")
-    const app = express();
+    // const app = express();
 
   /**
    * A little hack here
@@ -14,25 +26,17 @@ async function startServer() {
    * Well, at least in node 10 without babel and at the time of writing
    * So we are using good old require.
    **/
-    await require('./src/loaders').default({ app });  // TypeError: require(...).default is not a functio
+
+//   const mongoConnection = await mongooseLoader( {app : expressApp});  // Pass in param or no???
+    // await require('./src/loaders').default({ app });  // TypeError: require(...).default is not a functio
         console.log("Running Loaders now")
-        runLoaders(app);
+        loadersFile.runLoaders(app);
         console.log("Required loaders have run")
 
-    app.listen(config.port, () => {         // SWAP IN CORRECT PORT # !!
-        // Logger.info(`
-        console.log(`
-        ################################################
-        🛡️  Server listening on port: ${config.port} 🛡️
-        ################################################
-        `);
-    }).on('error', err => {
-        console.log("Startup Error!", err);
-        // Logger.error(err);
-        process.exit(1);
-    });
+
 }
 
+// loadLoadersFile();
 startServer();
 
 

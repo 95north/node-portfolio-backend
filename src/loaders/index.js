@@ -3,8 +3,8 @@
 // import mongooseLoader from './mongoose';
 
 const expressLoader = require('./express');
-const knexLoader = require('./knexfile');
 const mongooseLoader = require('./mongoose');
+const knexLoader = require('./knexfile'); 
 
 
 
@@ -15,12 +15,15 @@ console.log(">>>> in Loaders Index file")
 
 
 exports.runLoaders = async ({ expressApp }) => {   // NONE OF THIS EVER SEEMS TO LOG!!!! 
-    console.log("Calling MongoDB Loader ---- ")
-    const mongoConnection = await mongooseLoader( {app : expressApp});  // Pass in param or no???
+    // await expressLoader({ app: expressApp });
+    await expressLoader.connectExpressWebServer({ app: expressApp });
+    
+    console.log("Calling MongoDB Loader from Loaders index ---- ")
+    const mongoConnection = await mongooseLoader.connectMongoDb( {app : expressApp});  // Pass in param or no???  REFACTOR TO!!!    
     console.log('MongoDB Intialized from Loaders');
-    await expressLoader({ app: expressApp });
+
     const sqlConnection = await knexLoader();
-    console.log('SQL DB connection Intialized from Loaders');
+    console.log('SQL aka Knex DB connection Intialized from Loaders');
 };
 
 
