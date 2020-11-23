@@ -6,6 +6,7 @@ const aProject = require('../../services/project.js');   // SHOULD MOVE THIS LAT
 
     // ----  mongoDB    Project Routes ---- 
     exports.allprojects = async function (req, res) {
+        console.log("ALL PROJECTS FETCH UNDER ROUTE FOLDER CALLED!")
         function getProjectsFromMongoDB(){
             return allProjects.allProjects();
         }

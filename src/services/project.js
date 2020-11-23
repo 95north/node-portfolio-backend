@@ -1,4 +1,4 @@
-// MOVED ALL THIS HERE FROM  API/ROUTES/project.js !!! 
+// Project: Services - MOVED ALL THIS HERE FROM  API/ROUTES/project.js !!! 
 
 
 // Project model is MongoDB ! 
@@ -12,10 +12,12 @@ const connectDb = require('../../src/models');  // connectDb.connectDb to access
 
 
 
-// var Athlete = mongoose.model('Athlete', yourSchema);
-// var query = Athlete.find({ 'sport': 'Tennis' });
-// const Project = mongoose.model('Project');  //  [MissingSchemaError]: Schema hasn't been registered for model "Project".
-// const Project = require('../models/project.js')
+
+// const projectSchema = require('../models/project.js') // works in mongoose.js ...
+// //  Error on below: `Model` is not a valid type at path `Project`. 
+// const Project = mongoose.model('Project', projectSchema);  //  [MissingSchemaError]: Schema hasn't been registered for model "Project".
+
+const Project = require('../models/project.js') // works in mongoose.js ...
 // const Project = exports.Project;
 
 // var allProjects = Project.find({});
@@ -23,10 +25,14 @@ const connectDb = require('../../src/models');  // connectDb.connectDb to access
 
 
 async function allProjects(){ 
-
+    console.log("Project is", Project);
     function retrieveAllProjects (){
         let data = Project.find({},  function(err, result){  // All callbacks in Mongoose: callback(error, result)
-            if (err) return handleError(err);   
+            if (err){
+                console.log("Error with Project.find in Services ")
+                // return c//handleError(err);   
+            } 
+                
             projects = result;
             console.log("Type of result is -------", typeof result)
             console.log("________", projects[0]["languages"])
@@ -42,7 +48,6 @@ async function allProjects(){
         });
         return data;  // data = Query Object. 
     }
-
     let mydata = await retrieveAllProjects();
     return mydata;
 }

@@ -2,18 +2,24 @@ const express = require('express');
 const mongoWebApp = express(); 
 // mongodb://<HOSTNAME>:<PORT>/<DBNAME>
 const URL_MONGODB = "mongodb://localhost:27017/portfoliodb"; 
+// const URL_MONGODB = "mongodb://127.0.0.1.27017/portfoliodb"; 
+// dbpath=/data/db
 const PORT_MONGODB = "27017";  // Redundant??
 // for mongoDB, fm https://www.robinwieruch.de/mongodb-express-setup-tutorial
 
 // import mongoose from 'mongoose';
 const mongoose = require('mongoose');
-mongoose.set('debug', true);
+mongoose.set('debug', false); // This toggles whetheg Mongoose.insert()s printed or not!!!
 const models = require('../models');  
 const Project = require('../models/project');  
 const fs = require('fs');
 const Binary = require('mongodb').Binary;
 
-
+exports.connectMongoDb = async (app) => {
+    // console.log("In Loaders > Mongoose, app is: ", app)
+    await connectDb(app); //.then(seedMongoDb());
+    seedMongoDb(app);
+}
 
 // const URL_MONGODB = "mongodb://localhost:27017/data/db"; NOPE
 
@@ -30,19 +36,34 @@ const Binary = require('mongodb').Binary;
 
 
 // exports.connectDb = async () => {  
-const connectDb = async () => {    // Does it still work if I disconnect this? NO - bc use this in main index!!! 
-    // add error logging! 
+const connectDb = async (app) => {    // Does it still work if I disconnect this? NO - bc use this in main index!!! 
     // When createProjectSeedData() was never reached, this was never being invoked.....
 
-    let mongoDbConnection = mongoose.connect(URL_MONGODB);
-    console.log(`Mongoose.js connectDb  mongoDbConnection: , ${mongoDbConnection}
-    ################################################
-    🛡️🛡️  Mongoose Server - on port:  ${PORT_MONGODB}
-    ################################################
-    `)
-    console.log("typeof mongoDbConnection : ", mongoDbConnection)
-    return mongoDbConnection;
-    // return mongoose.connect(process.env.DATABASE_URL);
+    let k = await connectToMongoDB(app)
+    return k;
+
+    function connectToMongoDB(app){
+
+        let mongoDbConnection = mongoose.connect(
+                    URL_MONGODB, 
+                    { useNewUrlParser: true, 
+                    useUnifiedTopology: true }
+                ).catch(err => 
+                    console.log("Mongoose port 27017 error connecting: ", err)
+                ).then(() => {
+                    console.log(`Mongoose.js connectDb  mongoDbConnection: , ${mongoDbConnection}
+                    ################################################
+                    🛡️🛡️  Mongoose Server - on port:  ${PORT_MONGODB}
+                    ################################################`);
+                    app.app.listen(PORT_MONGODB, () => {
+                        console.log("Server has started!")
+                    })
+                }
+        )
+        console.log("typeof mongoDbConnection : ", mongoDbConnection)
+        return mongoDbConnection;
+        // return mongoose.connect(process.env.DATABASE_URL);
+    }
 };
 
 
@@ -67,7 +88,9 @@ const connectDb = async () => {    // Does it still work if I disconnect this? N
 
 // //  this version: re-initializes db on every Express server start
 const eraseDatabaseOnSync =  true;  // was true, changed bc got error "Cannot read property 'deleteMany' of undefined"
+// const seedMongoDb = (app) => {  
 const seedMongoDb = async (app) => {  
+
     console.log("INSIDE ASYNC FUNCTION AFTER CONNECTDB EXECUTES")
     // console.log("app is: ", app)
     // const models = require('../models');  
@@ -82,22 +105,21 @@ const seedMongoDb = async (app) => {
     console.log(" MongoDb models.Project is:", models.Project)  //MongoDb Project is: { Project: Model { Project } }
 
     if (eraseDatabaseOnSync && Project !== undefined) {
+        //  Promise.all([
         await Promise.all([
             Project.Project.deleteMany({}),   // Cannot read property 'Project' of undefined
-        ])
-        createProjectSeedData();
-    }
-    app.listen(PORT_MONGODB , () =>
-      console.log(`Now listening on port  ------------ ${PORT_MONGODB}!`),
-      console.log(`Now listening on url ------------ ${URL_MONGODB}!`),
-    );
+        ]).then(
+            createProjectSeedData()
+        );
+    } 
+    // app.listen(PORT_MONGODB , () =>
+    //   console.log(`Now listening on port  ------------ ${PORT_MONGODB}!`),
+    //   console.log(`Now listening on url ------------ ${URL_MONGODB}!`),
+    // );
 }
 
 
-exports.connectMongoDb = async (app) => {
-    await connectDb(); //.then(seedMongoDb());
-    seedMongoDb(app);
-}
+
 
 
 
@@ -223,7 +245,7 @@ const processImageUpload = (imgLocation) => {
 
     var img = fs.readFileSync(imgLocation);     // const fs = require('fs');
     // print it out so you can check that the file is loaded correctly
-    console.log("Loading image file");
+    // console.log("Loading image file");
     console.log("uploaded img is : ", img);  //  uploaded img is :  <Buffer 89 50 4e 47 0d 
     
 
@@ -233,9 +255,9 @@ const processImageUpload = (imgLocation) => {
     imageBin.bin = Binary(img);                 // const Binary = require('mongodb').Binary;
     // console.log("type of imageBin.bin is : ", typeof imageBin.bin) // "object"
     console.log("imageBin.bin is instance of Binary? : ", imageBin.bin instanceof Binary) // true
-    console.log("largo de invoice.bin= "+ imageBin.bin.length());
-    console.log("Buffer.isEncoding(utf8) :", Buffer.isEncoding("utf8")) // returns true for both utf8 and binary.... 
-    console.log("Buffer.isEncoding(binary) :", Buffer.isEncoding("binary"))  // returns true for both utf8 and binary.... 
+    // console.log("length de invoice.bin= "+ imageBin.bin.length());
+    // console.log("Buffer.isEncoding(utf8) :", Buffer.isEncoding("utf8")) // returns true for both utf8 and binary.... 
+    // console.log("Buffer.isEncoding(binary) :", Buffer.isEncoding("binary"))  // returns true for both utf8 and binary.... 
     return imageBin.bin
     // What gets inserted into MongoDB: 
     //  images: [ 'BinData(0, ' + '"iVBORw0KGgoAAAANSUhEUgAABmwAAAQoCAYAAAAHVfHnAAAMJWlDQ1BJQ0MgUHJvZmlsZQAASImVlwdUU8kagOeWJCQktEAEpITeBJFepNcIAlIFGyEJJJQYEoKKHVlUcC2oiGBFV0....

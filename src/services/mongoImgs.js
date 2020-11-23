@@ -25,7 +25,7 @@
         var img = fs.readFileSync(imgLocation);     // const fs = require('fs');
         // print it out so you can check that the file is loaded correctly
         console.log("Loading image file");
-        console.log("uploaded img is : ", img);  //  uploaded img is :  <Buffer 89 50 4e 47 0d 
+        // console.log("uploaded img is : ", img);  //  uploaded img is :  <Buffer 89 50 4e 47 0d 
         
 
         // return img  // what if just return Buffer instead? 

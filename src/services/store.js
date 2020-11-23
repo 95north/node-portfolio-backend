@@ -7,12 +7,14 @@ const crypto = require('crypto')
 const knex = require('knex')({      // LOAD THIS IN FROM KNEXFILE.JS  INSTEAD? ? ? 
   client: 'mysql',
   connection: {
+    host : '127.0.0.1',  // Added Nov 22... 
     user: 'root',
     password: 'tori',
     database: 'node_site_db'
   }
-})(require('../loaders/knexfile'))
+}) // (require('../loaders/knexfile'));
 
+// const mySQLdb = require('knex')(knex);  //  Unknown configuration option 'client' value
 
 
 module.exports = {
@@ -26,6 +28,13 @@ module.exports = {
         encrypted_password: hash,
         username
       })//.debug()   // log a Knex query
+    },
+
+    retrieveUserList () {
+      console.log(`Retrieving all users function in Services > store.js.   knex is: `, knex);
+      // return mySQLdb('user');
+      return knex('user');
+
     },
 
     authenticate ({ username, password }) {

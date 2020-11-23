@@ -3,6 +3,7 @@
 
 import { Router } from 'express';
 const route = Router();
+const bodyParser = require('body-parser');   // I think I need, per notes? 
 
 export default (app) => {    // was typescript (app: Router)   "Router" is a type, caused issue. 
   app.post('/login', (req, res) => {

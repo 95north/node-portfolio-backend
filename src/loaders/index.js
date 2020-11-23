@@ -1,19 +1,27 @@
 const expressLoader = require('./express');
 const mongooseLoader = require('./mongoose');
-const knexLoader = require('./knexfile'); 
+const knexLoader = require('./knexfile');   // UnhandledPromiseRejectionWarning: TypeError: knexLoader is not a function
 // import Logger from './logger';
 // //We have to import at least all the events once so they can be triggered
 // import './events';
+const express = require('express');
+const mongoApp = express();    
 
 
-exports.runLoaders = async ({ expressApp }) => {   // NONE OF THIS EVER SEEMS TO LOG!!!! 
-    console.log("Calling Express Loader from Loaders index ---- ")
-    await expressLoader.connectExpressWebServer({ app: expressApp });
+exports.runLoaders = async ( appObj ) => {   // NONE OF THIS EVER SEEMS TO LOG!!!! 
+// exports.runLoaders = async ({ expressApp }) => {   // NONE OF THIS EVER SEEMS TO LOG!!!! 
+    console.log("Calling Express Loader from Loaders index ---- : "); //, {appObj})
+    await expressLoader.connectExpressWebServer({ app: appObj.app });
+    // await expressLoader.connectExpressWebServer({ app: expressApp });
+
     
-    const mongoConnection = await mongooseLoader.connectMongoDb( {app : expressApp});  // Pass in param or no???  REFACTOR TO!!!    
+    
+    const mongoConnection = await mongooseLoader.connectMongoDb( {app : appObj.mongoApp});  // Pass in param or no???  REFACTOR TO!!!    
+    // const mongoConnection = await mongooseLoader.connectMongoDb( {app : expressApp});  // Pass in param or no???  REFACTOR TO!!!    
     console.log('MongoDB Intialized from Loaders');
 
-    const sqlConnection = await knexLoader();
+    const sqlConnection = knexLoader;  // UnhandledPromiseRejectionWarning: TypeError: knexLoader is not a function
+    // const sqlConnection = await knexLoader();  // UnhandledPromiseRejectionWarning: TypeError: knexLoader is not a function
     console.log('SQL aka Knex DB connection Intialized from Loaders');
 };
 

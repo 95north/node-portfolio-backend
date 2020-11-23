@@ -1,5 +1,8 @@
 const express = require('express');
 const app = express();    
+const mongoApp = express();    
+
+
 const loadersFile = require('./src/loaders')//.default({ app });
 console.log("loadersFile is : ", loadersFile);
 // import Logger from './loaders/logger';
@@ -7,9 +10,9 @@ console.log("loadersFile is : ", loadersFile);
 
 
 async function startServer() {
-    console.log("in startServer")
-    console.log("Running Loaders now")
-    loadersFile.runLoaders(app);
+    mongoApp.use('/', require('./src/api'));
+    console.log("in main index: startServer -Running Loaders now")
+    loadersFile.runLoaders({app: app, mongoApp: mongoApp});
     console.log("Required loaders have run")
 
     /**
