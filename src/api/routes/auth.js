@@ -4,10 +4,14 @@
 import { Router } from 'express';
 const route = Router();
 const bodyParser = require('body-parser');   // I think I need, per notes? 
+const mySqlConnection = require('../loaders/knexfile');
+const knex = mySqlConnection;
+
+
 
 export default (app) => {    // was typescript (app: Router)   "Router" is a type, caused issue. 
   app.post('/login', (req, res) => {
-      store                     // store = KNEX -- MySQL
+      knex//store                     // store = KNEX -- MySQL
         .authenticate({
             username: req.body.username,
             password: req.body.password

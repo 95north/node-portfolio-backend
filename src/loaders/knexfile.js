@@ -1,12 +1,13 @@
 
-const store = require('../services/store');  //****** KNEX TO CONNECT TO MySQL DATABASE !!!!  */
-const connectDb = require('../models');    // the MongoDB database Connection itself 
-
-
-// // PORT for MySQL + KNEX .   Looks like it works running 2 ports for 2 DBs! 
-// app.listen(7555, () => {
-//   console.log('Server running on http://localhost:7555')
-// })
+module.exports = require('knex')({      // unnamed export. 
+  client: 'mysql',
+  connection: {
+    host : '127.0.0.1',  // Added Nov 22... 
+    user: 'root',
+    password: 'tori',
+    database: 'node_site_db'
+  }
+})
 
 
 // https://blog.logrocket.com/setting-up-a-restful-api-with-node-js-and-postgresql-d96d6fc892d8/
@@ -16,29 +17,17 @@ const connectDb = require('../models');    // the MongoDB database Connection it
 // version control, but for the simplicity of this tutorial ,
 //  we’re keeping it in the same file as the queries.
 
-// const Pool = require('pg').Pool
-// const pool = new Pool({
-//   user: 'me',
-//   host: 'localhost',
-//   database: 'api',
-//   password: 'password',
-//   port: 5432,
-// })
 
-
-
-// this is in Services > store.js.   This is probably not being used anywhere, pasted in on Nov 22. 
-const knex = require('knex')({      // LOAD THIS IN FROM KNEXFILE.JS  INSTEAD? ? ? 
-  client: 'mysql',
-  connection: {
-    user: 'root',
-    password: 'tori',
-    database: 'node_site_db',
-    host : '127.0.0.1',       // added Nov 23
-    port: 7555                // VS ADDED Sun Nov 22nd. 
-  }
-})(require('../loaders/knexfile'))
-
+// const knex2 = require('knex')({   
+//   client: 'mysql',
+//   connection: {
+//     user: 'root',
+//     password: 'tori',
+//     database: 'node_site_db',
+//     host : '127.0.0.1',       
+//     port: 7555                
+//   }
+// })(require('../loaders/knexfile'))
 
 
 // module.exports = require('knex')({
@@ -56,14 +45,4 @@ const knex = require('knex')({      // LOAD THIS IN FROM KNEXFILE.JS  INSTEAD? ?
 //   })
 
 
-
-  module.exports = {          // This is how it is in node_express_site.... 
-    client: 'mysql',
-    connection: {
-      user: 'root',
-      password: 'tori',
-      database: 'node_site_db',
-      host : '127.0.0.1',       // added Nov 23
-      port: 7555                // VS ADDED Sun Nov 22nd. 
-    }
-  }
+  // exports.mySqlDbConnection = knex;         

@@ -4,8 +4,6 @@ let config = {"port" : 7555}
 const expressWebServerApp = express();      // we create a new app here!  
 // let expressPort = process.env.PORT || 8070;
 // import bodyParser from 'body-parser';
-const routes = require('../api'); 
-
 
 
 exports.connectExpressWebServer = async (app) => {
@@ -22,7 +20,8 @@ exports.connectExpressWebServer = async (app) => {
         next();
     });
 
-    expressWebServerApp.use('/', require('../api'));  // WE NEED THIS!!!  Tested.  same as line 7 "routes"?
+    expressWebServerApp.use('/api', require('../api'));  // WE NEED THIS!!!  Tested.  same as line 7 "routes"?
+    // expressWebServerApp.use('/', require('../api'));  // WE NEED THIS!!!  Tested.  same as line 7 "routes"?
 
     expressWebServerApp.listen(config.port, () => {         // SWAP IN CORRECT PORT # !!
         // Logger.info(`
