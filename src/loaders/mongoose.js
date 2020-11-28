@@ -1,49 +1,36 @@
 const express = require('express');
-const mongoWebApp = express(); 
-// mongodb://<HOSTNAME>:<PORT>/<DBNAME>
-const URL_MONGODB = "mongodb://localhost:27017/portfoliodb"; 
+const URL_MONGODB = "mongodb://localhost:27017/portfoliodb";   // mongodb://<HOSTNAME>:<PORT>/<DBNAME>       // dbpath=/data/db
 // const URL_MONGODB = "mongodb://127.0.0.1.27017/portfoliodb"; 
-// dbpath=/data/db
 const PORT_MONGODB = "27017";  // Redundant??
-// for mongoDB, fm https://www.robinwieruch.de/mongodb-express-setup-tutorial
-
-// import mongoose from 'mongoose';
 const mongoose = require('mongoose');
 mongoose.set('debug', false); // This toggles whetheg Mongoose.insert()s printed or not!!!
 const models = require('../models');  
 const Project = require('../models/project');  
 const fs = require('fs');
 const Binary = require('mongodb').Binary;
+// const mongoWebApp = express(); 
 
-exports.connectMongoDb = async (app) => {
+
+exports.connectMongoDb = async (app) => {           // this function is actively used! 
     // console.log("In Loaders > Mongoose, app is: ", app)
     await connectDb(app); //.then(seedMongoDb());
+            // app.use(express.static('public'))                        // TypeError: app.use is not a function
+            // app.use(function(req, res, next) {
+            //     res.header("Access-Control-Allow-Origin", "*");
+            //     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+            //     next();
+            // });
     seedMongoDb(app);
 }
-
-// const URL_MONGODB = "mongodb://localhost:27017/data/db"; NOPE
-
-// eg. the environment var in an .env file could look like this:
-// DATABASE_URL=mongodb://localhost:27017/node-express-mongodb-server
-
-// The database URL can seen when you start up 
-// MongoDB on the command line. You only need 
-// to define a subpath for the URL 
-// to define a specific database. 
-// If the database doesn't exist yet, 
-// MongoDB will create one for you.
-
 
 
 // exports.connectDb = async () => {  
 const connectDb = async (app) => {    // Does it still work if I disconnect this? NO - bc use this in main index!!! 
     // When createProjectSeedData() was never reached, this was never being invoked.....
-
     let k = await connectToMongoDB(app)
     return k;
 
     function connectToMongoDB(app){
-
         let mongoDbConnection = mongoose.connect(
                     URL_MONGODB, 
                     { useNewUrlParser: true, 
@@ -58,13 +45,43 @@ const connectDb = async (app) => {    // Does it still work if I disconnect this
                     app.app.listen(PORT_MONGODB, () => {
                         console.log("Server has started!")
                     })
+                    // app.app.use(express.static('public'))                     
+                    
+                    // localhost didn’t send any data.
+                    // frontend error: Unhandled Rejection (TypeError): Failed to execute 'json' on 'Response': body stream already read
+                    // but without the CORS below, get CORS blocked issue! 
+
+                    app.app.use(function(req, res, next) {
+                        res.header("Access-Control-Allow-Origin", "*");
+                        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+                        // next();
+                    });
                 }
         )
+        // mongoDbConnection.use(express.static('public'))                     // TypeError: mongoDbConnection.use is not a function
+        // mongoDbConnection.use(function(req, res, next) {
+        //     res.header("Access-Control-Allow-Origin", "*");
+        //     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+        //     next();
+        // });
         console.log("typeof mongoDbConnection : ", mongoDbConnection)
         return mongoDbConnection;
         // return mongoose.connect(process.env.DATABASE_URL);
     }
 };
+
+
+// eg. the environment var in an .env file could look like this:
+// DATABASE_URL=mongodb://localhost:27017/node-express-mongodb-server
+
+// The database URL can seen when you start up 
+// MongoDB on the command line. You only need 
+// to define a subpath for the URL 
+// to define a specific database. 
+// If the database doesn't exist yet, 
+// MongoDB will create one for you.
+
+
 
 
 

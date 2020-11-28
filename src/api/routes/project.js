@@ -3,40 +3,62 @@ const allProjects = require('../../services/project.js');   // SHOULD MOVE THIS 
 const aProject = require('../../services/project.js');   // SHOULD MOVE THIS LATER !!!! to controller or svc. 
 // const route = Router();  NOT USED
 // ***** MIGHT need to import model like:    Contact = require('./contactModel');
+let router = require('express').Router();
+let projectController = require('../../services/project.js');
 
+// THIS IS NOT BEING USED - Services > Project is ! 
     // ----  mongoDB    Project Routes ---- 
-    exports.allprojects = async function (req, res) {
-        console.log("ALL PROJECTS FETCH UNDER ROUTE FOLDER CALLED!")
-        function getProjectsFromMongoDB(){
-            return allProjects.allProjects();
-        }
+    // exports.allprojects = async function (req, res) {
+    //     console.log("ALL PROJECTS FETCH UNDER ROUTE FOLDER CALLED!")
+    //     function getProjectsFromMongoDB(){
+    //         return allProjects.allProjects();
+    //     }
 
-        let theData = await getProjectsFromMongoDB();
-
-        return res.status(200).send({
-            success: 'true',
-            projectsArray: theData,
-        })
-    }
-
-
-    exports.p =  async function (req, res) {
-    // console.log("in aProject, res is: ", res)   //  a ServerResponse obj!  Interesting to look at! 
-    function getAProjectFromMongoDB(){
-        return aProject.aProject();
-    }
-    let theData = await getAProjectFromMongoDB();
-    // return  theData.json();        // Error : TypeError: theData.json is not a function
-    // return res.json(theData);      // This works.  It likes this. 
-    return res.status(200).send({
-        theData
-    })
-    }
+    //     let theData = await getProjectsFromMongoDB();
+    //     // res.header("Access-Control-Allow-Origin", "*");
+    //     // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    //     return res.status(200).send({
+    //         success: 'true',
+    //         projectsArray: theData,
+    //     })
+    // }
 
 
+    // exports.p =  async function (req, res) {
+    // // console.log("in aProject, res is: ", res)   //  a ServerResponse obj!  Interesting to look at! 
+    // function getAProjectFromMongoDB(){
+    //     return aProject.aProject();
+    // }
+    // let theData = await getAProjectFromMongoDB();
+    // // return  theData.json();        // Error : TypeError: theData.json is not a function
+    // // return res.json(theData);      // This works.  It likes this. 
+    // return res.status(200).send({
+    //     theData
+    // })
+    // }
 
 
 
+ 
+    // coppied from API index!!!     
+    router.get('/allprojects', function (req, res) {
+        let data = projectController.allProjects();
+        res.header("Access-Control-Allow-Origin", "*");
+        // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+        // res.header("Access-Control-Allow-Headers", "Origin");
+        res.header("Access-Control-Allow-Headers", "Authorization, Origin, X-Requested-With, Content-Type, Accept");  
+        res.header("Access-Control-Allow-Methods", "PATCH, POST, GET, PUT, DELETE, OPTIONS");
+        res.json({
+            status: 200,
+            message: 'This API is working, there should be data here!!',
+            body: data
+        });
+    });
+    
+    
+    // need to add one project route here!
+    
+    module.exports = router;
 
 // export default (app) => {    // was typescript (app: Router)   "Router" is a type, caused issue. 
 //     app.use('/auth', route);

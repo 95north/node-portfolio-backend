@@ -31,7 +31,7 @@ exports.connectExpressWebServer = async (app) => {
         ################################################
         `);
     }).on('error', err => {
-        console.log("Startup Error!", err);
+        console.log("Express SQL Knex Server Startup Error!", err);
         // Logger.error(err);
         process.exit(1);
     });

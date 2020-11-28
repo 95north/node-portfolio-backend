@@ -1,32 +1,25 @@
-// Project: Services - MOVED ALL THIS HERE FROM  API/ROUTES/project.js !!! 
-
-
 // Project model is MongoDB ! 
 
-const express = require('express');
-const router = express.Router();
-const mongoose = require('mongoose');
-const connectDb = require('../../src/models');  // connectDb.connectDb to access it...    this is the DB connection
-
-
-
-
-
+// const express = require('express');
+// const router = express.Router();
+// const mongoose = require('mongoose');
+// const connectDb = require('../../src/models');  // connectDb.connectDb to access it...    this is the DB connection
 
 // const projectSchema = require('../models/project.js') // works in mongoose.js ...
 // //  Error on below: `Model` is not a valid type at path `Project`. 
 // const Project = mongoose.model('Project', projectSchema);  //  [MissingSchemaError]: Schema hasn't been registered for model "Project".
 
-const Project = require('../models/project.js') // works in mongoose.js ...
-// const Project = exports.Project;
+const mongoose = require('mongoose');
+const Project = mongoose.model('Project' );
+// const Project = require('../models/project.js') // works in mongoose.js ...
+console.log("Project is", Project); // A MongoDb Model, correct! 
 
-// var allProjects = Project.find({});
-// allProjects = () => { Project.find({}); }
+// const Project = exports.Project;
 
 
 async function allProjects(){ 
-    console.log("Project is", Project);
     function retrieveAllProjects (){
+        // .find() is probably a mongoose function.... 
         let data = Project.find({},  function(err, result){  // All callbacks in Mongoose: callback(error, result)
             if (err){
                 console.log("Error with Project.find in Services ")
@@ -34,8 +27,8 @@ async function allProjects(){
             } 
                 
             projects = result;
-            console.log("Type of result is -------", typeof result)
-            console.log("________", projects[0]["languages"])
+            console.log("Services > Project.  Type of result is -------", typeof result)
+            console.log("________ 1st Project Languages", projects[0]["languages"])
             return projects;
 
             // if (projects.length > 0){
