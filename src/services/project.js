@@ -2,7 +2,6 @@
 
 // const express = require('express');
 // const router = express.Router();
-// const mongoose = require('mongoose');
 // const connectDb = require('../../src/models');  // connectDb.connectDb to access it...    this is the DB connection
 
 // const projectSchema = require('../models/project.js') // works in mongoose.js ...
@@ -27,8 +26,8 @@ async function allProjects(){
             } 
                 
             projects = result;
-            console.log("Services > Project.  Type of result is -------", typeof result)
-            console.log("________ 1st Project Languages", projects[0]["languages"])
+            console.log("Services > Project > allProjects().  Type of result is --", typeof result)
+            console.log("___1st Project Languages", projects[0]["languages"])
             return projects;
 
             // if (projects.length > 0){

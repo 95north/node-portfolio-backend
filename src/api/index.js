@@ -1,24 +1,6 @@
 
 let router = require('express').Router();       // Initialize express router
-// THIS is for PROJECT (mongo)- MOVE TO PROJECT FOLDER!!!!!!
-let projectController = require('../services/project.js');
-// console.log("projectController : ", projectController) // WORKS - project controller imported ok. 
-
-
-router.get('/allprojects', function (req, res) {
-    let data = projectController.allProjects();
-    res.header("Access-Control-Allow-Origin", "*");
-    // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    // res.header("Access-Control-Allow-Headers", "Origin");
-    res.header("Access-Control-Allow-Headers", "Authorization, Origin, X-Requested-With, Content-Type, Accept");  
-    res.header("Access-Control-Allow-Methods", "PATCH, POST, GET, PUT, DELETE, OPTIONS");
-    res.json({
-        status: 200,
-        message: 'This API is working, there should be data here!!',
-        body: data
-    });
-});
-
+// let projectController = require('../services/project.js');
 
 router.get('/', function (req, res) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -32,28 +14,39 @@ router.get('/', function (req, res) {
 router.use('/user', require('./routes/user.js'));
 // router.use('/auth', require('./routes/auth.js'));
 router.use('/project', require('./routes/project.js'));  
-// ERROR on above : Router.use() requires a middleware function but got a Object
 
 
-
-
+module.exports = router;
 
 
 // Project routes
 // router.route('/allprojects')            // http://localhost:7555/api/allProjects
 //     .get(projectController.allProjects)  // Route.get() requires a callback function but got a [object Undefined]
 
-router.route('/p')
-    .get(projectController.aProject)
-    // .patch(contactController.update)
-    // .put(contactController.update)
-    // .delete(contactController.delete);
+// MODULARIZED. No longer using: 
+// router.route('/p')
+//     .get(projectController.aProject)
+//     // .patch(contactController.update)
+//     // .put(contactController.update)
+//     // .delete(contactController.delete);
+
+// router.get('/allprojects', function (req, res) {
+//     let data = projectController.allProjects();
+//     res.header("Access-Control-Allow-Origin", "*");
+//     // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+//     // res.header("Access-Control-Allow-Headers", "Origin");
+//     res.header("Access-Control-Allow-Headers", "Authorization, Origin, X-Requested-With, Content-Type, Accept");  
+//     res.header("Access-Control-Allow-Methods", "PATCH, POST, GET, PUT, DELETE, OPTIONS");
+//     res.json({
+//         status: 200,
+//         message: 'This API is working, there should be data here!!',
+//         body: data
+//     });
+// });
 
 
 
 
-
-module.exports = router;
 
 // // guaranteed to get dependencies
 // export default () => {
