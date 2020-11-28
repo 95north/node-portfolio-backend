@@ -3,18 +3,32 @@ let router = require('express').Router();
 let projectController = require('../../services/project.js');
 
     
-    router.get('/allprojects', function (req, res) {
-        let data = projectController.allProjects();
+
+    router.get('/allprojects', async function (req, res) {
+        let data = await projectController.allProjects();
+        // let data = projectController.allProjects();
+        // let data;
+
+        function getAllProjectData (scope){
+            console.log("this is :", scope)
+            this.data = projectController.allProjects();  //Cannot access 'data' before initialization
+            return projectController.allProjects();
+        }
         res.header("Access-Control-Allow-Origin", "*");
         // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
         // res.header("Access-Control-Allow-Headers", "Origin");
         res.header("Access-Control-Allow-Headers", "Authorization, Origin, X-Requested-With, Content-Type, Accept");  
         res.header("Access-Control-Allow-Methods", "PATCH, POST, GET, PUT, DELETE, OPTIONS");
-        res.json({
-            status: 200,
-            message: 'This API is working, there should be data here!!',
-            body: data
-        });
+        // res.json({
+        //     status: 200,
+        //     message: 'This API is working, there should be data here!!',
+        //     body: data
+        // });
+
+        return res.status(200).send({  // how responded in old project
+            success: 'true',
+            projectsArray: data,
+        })
     });
     
     
@@ -27,7 +41,7 @@ let projectController = require('../../services/project.js');
 
 
 
-    
+
 
 
 // export default (app) => {    // was typescript (app: Router)   "Router" is a type, caused issue. 
