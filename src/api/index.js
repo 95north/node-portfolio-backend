@@ -11,9 +11,10 @@ router.get('/', function (req, res) {
     });
 });
 
-router.use('/user', require('./routes/user.js'));
-// router.use('/auth', require('./routes/auth.js'));
+router.use('/entry', require('./routes/entry.js'));
+router.use('/login', require('./routes/login.js'));
 router.use('/project', require('./routes/project.js'));  
+router.use('/user', require('./routes/user.js'));
 
 
 module.exports = router;
