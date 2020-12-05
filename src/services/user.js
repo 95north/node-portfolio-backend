@@ -2,9 +2,10 @@ const crypto = require('crypto')
 // const knex = mySqlConnection.mySqlDbConnection;     // using named export.
 const knex = require('../loaders/knexfile');
 
-
+// move to auth? Or keep here? 
 module.exports = {
     saltHashPassword,
+    checkUserExists,
 
     createUser ({ username, password }) {
       console.log(`Add user ${username}`)
@@ -21,7 +22,10 @@ module.exports = {
       return knex('user');
     },
 
-    authenticate ({ username, password }) {
+    // Add error handling? 
+    // Should this be here or in auth? 
+    // was named 'authenticate' orig. 
+    checkPassword ({ username, password }) {
       console.log(`Authenticating user ${username}`)
       return knex('user').where({ username })
         .then(([user]) => {
@@ -33,6 +37,7 @@ module.exports = {
           })
           return { success: hash === user.encrypted_password,
             "uinfo" : hash
+            // need to return a JWT token as well. 
           }
         })
     }
@@ -55,28 +60,12 @@ function saltHashPassword ({password, salt = randomString()}) {
     }
 }
 
+function checkUserExists(){
 
-function randomString () {
-  // crypto is a native node module and need not be installed using npm.
-  return crypto.randomBytes(4).toString('hex')
 }
 
 
-
-
-
-// All we need our store to do is load in knex using the 
-// knexfile.js config and then write data to the user table 
-// whenever a createUser request is made.
-
-// const knex = require('knex')(require('./knexfile'))
-
-// For the time being, we will mock the store in order to check that our API works.
-// Below: did NOT persist created user to mysql
-
-// module.exports = {
-//     createUser ({ username, password }) {
-//       console.log(`Add user ${username} with password ${password}`)
-//       return Promise.resolve()
-//     }
-//   }
+function randomString () {
+    // crypto is a native node module and need not be installed using npm.
+    return crypto.randomBytes(4).toString('hex')
+}

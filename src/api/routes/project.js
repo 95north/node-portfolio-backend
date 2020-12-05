@@ -9,11 +9,11 @@ let projectController = require('../../services/project.js');
         // let data = projectController.allProjects();
         // let data;
 
-        function getAllProjectData (scope){
-            console.log("this is :", scope)
-            this.data = projectController.allProjects();  //Cannot access 'data' before initialization
-            return projectController.allProjects();
-        }
+        // function getAllProjectData (scope){
+        //     console.log("this is :", scope)
+        //     this.data = projectController.allProjects();  //Cannot access 'data' before initialization
+        //     return projectController.allProjects();
+        // }
         res.header("Access-Control-Allow-Origin", "*");
         // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
         // res.header("Access-Control-Allow-Headers", "Origin");
