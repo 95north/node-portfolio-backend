@@ -1,10 +1,10 @@
 
 var jwt = require('jwt-simple');
-var moment = require('moment');
+// var moment = require('moment');
 // var config = require('../../config');
 var config = { "TOKEN_SECRET" : "terribleSecurity"}
 
-var User= require('../../services/user');
+var User= require('./user');
 
 // def retrieve
 //     token = request.headers["Authorization"]
@@ -33,9 +33,9 @@ module.exports = {
             return res.status(401).send({ error: "TokenInvalid" });
           }
 
-          if (payload.exp <= moment().unix()) {
-            return res.status(401).send({ error: 'TokenExpired' });
-          }
+        //   if (payload.exp <= moment().unix()) {
+        //     return res.status(401).send({ error: 'TokenExpired' });
+        //   }
 
           
           // check if the user exists

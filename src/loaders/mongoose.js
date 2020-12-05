@@ -5,7 +5,9 @@ const PORT_MONGODB = "27017";  // Redundant??
 const mongoose = require('mongoose');
 mongoose.set('debug', false); // This toggles whetheg Mongoose.insert()s printed or not!!!
 const models = require('../models');  
-const Project = require('../models/project');  
+const Project = require('../models/project');
+const Entry = require('../models/entry');  
+
 const fs = require('fs');
 const Binary = require('mongodb').Binary;
 // const mongoWebApp = express(); 
@@ -21,6 +23,7 @@ exports.connectMongoDb = async (app) => {           // this function is actively
             //     next();
             // });
     seedMongoDb(app);
+    createEntry(app);
 }
 
 
@@ -355,6 +358,15 @@ const processImageUpload = (imgLocation) => {
 
 
 
+
+const createEntry = async (app) => {
+    const entry = new Entry.Entry({
+        // const project3 = new models.models.Project({
+        topic: "Testing",
+        detail: "is the best documentation" 
+    });
+    await entry.save(); 
+}
 
 
 

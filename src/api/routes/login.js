@@ -1,20 +1,22 @@
-import { Router } from 'express';
-const route = Router();
+// import { Router } from 'express';
+// const route = Router();
+let route = require('express').Router();
+
 const bodyParser = require('body-parser');   // I think I need, per notes? 
-const mySqlConnection = require('../loaders/knexfile');
+const mySqlConnection = require('../../loaders/knexfile');
 const knex = mySqlConnection;
 let userServices = require('../../services/user.js');
 let authServices = require('../../services/auth.js');
 
 
 
-export default (app) => {   
-  app.post('/login', (req, res) => {
+// export default (app) => {   
+  route.post('/login', (req, res) => {
     userServices.checkPassword({
         username: req.body.username,
         password: req.body.password
     })
-    .then(( resp ) => {
+    .then( async ( resp ) => {
         console.log("In Backend Index post login response. uInfo is: ", resp.uinfo)
         if (resp.success) {       
             let userinfo;
@@ -36,7 +38,7 @@ export default (app) => {
         }
     })
   })
-}
+// }
 module.exports = route;
 
 

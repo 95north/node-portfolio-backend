@@ -6,7 +6,7 @@ const entryServices = require('../../../src/services/entry.js');
 
 
 
-route.post('/entry', (req, res) => {
+route.post('/entry', async (req, res) => {
     // store                     // store = KNEX -- MySQL
 
     try {
@@ -17,7 +17,7 @@ route.post('/entry', (req, res) => {
     }
 })
 
-route.get('/entries', (req, res) => {
+route.get('/entries', async (req, res) => {
     // store                     // store = KNEX -- MySQL
 
 
@@ -35,7 +35,7 @@ route.get('/entries', (req, res) => {
     } catch (error) {
         res.status(500).send(error);
     }
-
+})
 
 // route.get('/userList', (req, res) => {        // http://localhost:7555/api/user/userList
 //   console.log("in Routes > User.js >  userList route is hit!")

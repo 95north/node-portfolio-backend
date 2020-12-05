@@ -3,7 +3,7 @@ const Entry = mongoose.model('Entry' );
 
 module.exports = {
 
-    addEntry(req){
+    async addEntry(req){
         console.log("Has req.body? req param received in addEntry is: ", req);
         try {
             let entry = new Entry(req.body);
@@ -16,7 +16,7 @@ module.exports = {
         }
     }, 
 
-    getAllEntries(){
+    async getAllEntries(){
         try {
             let entries = await Entry.find({});
             // let result = await entry.save();
