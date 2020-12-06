@@ -6,11 +6,12 @@ const store = require('../../../src/loaders/knexfile');  // DON't NEED this- Ser
 
 
 route.post('/createUser', (req, res) => {
+  console.log("create user req.body: ", req.body);
   // store                     // store = KNEX -- MySQL
   userServices
     .createUser({
-      username: req.body.username,
-      password: req.body.password
+      username: req.body.user.username,
+      password: req.body.user.password
     })
     .then(() => res.sendStatus(200))
 })

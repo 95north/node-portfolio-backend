@@ -9,7 +9,10 @@ module.exports = {
 
     createUser ({ username, password }) {
       console.log(`Add user ${username}`)
-      const { salt, hash } = saltHashPassword(password)
+      console.log("pw is :", password)
+      console.log("pw type :", typeof password)
+
+      const { salt, hash } = saltHashPassword({password})
       return knex('user').insert({
         salt,
         encrypted_password: hash,
@@ -26,17 +29,24 @@ module.exports = {
     // Should this be here or in auth? 
     // was named 'authenticate' orig. 
     checkPassword ({ username, password }) {
-      console.log(`Authenticating user ${username}`)
-      return knex('user').where({ username })
-        .then(([user]) => {
+      console.log(`Authenticating user:  ${username}`)
+      return knex('user').where({ username: username })
+        .then((user) => {
           console.log("In store.authenticate() - user is ", user) 
+          console.log("In store.authenticate() - user.salt is ", user[0].salt) 
+
           if (!user) return { success: false }
           const { hash } = saltHashPassword({
-            password,
-            salt: user.salt
+            password : password,
+            salt: user[0].salt
           })
-          return { success: hash === user.encrypted_password,
-            "uinfo" : hash
+          console.log("hash is: ", hash)
+          let resp;
+          success: hash === user.encrypted_password ? resp = {success: true, "uinfo" : hash} : resp = {success : false}
+          return { 
+            // success: hash === user.encrypted_password,
+            // "uinfo" : hash
+            resp
             // need to return a JWT token as well. 
           }
         })
@@ -46,6 +56,7 @@ module.exports = {
 
 
 function saltHashPassword ({password, salt = randomString()}) {
+  console.log(`in saltHashPswd   user salt: ${salt},  pw: ${password}`)
 // function saltHashPassword (password) {  // now accepts salt optionally
 // argument as object- call like: 
 //   saltHashPassword({ password: 'some password', salt: '239ab09'})

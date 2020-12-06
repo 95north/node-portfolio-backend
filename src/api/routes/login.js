@@ -8,14 +8,27 @@ const knex = mySqlConnection;
 let userServices = require('../../services/user.js');
 let authServices = require('../../services/auth.js');
 
+route.get('/g', (req, res) => {
+    console.log("In GET Login Route")
 
+            res.header("Access-Control-Allow-Origin", "*");
+            res.header("Access-Control-Allow-Headers", "Authorization, Origin, X-Requested-With, Content-Type, Accept");  
+            res.header("Access-Control-Allow-Methods", "PATCH, POST, GET, PUT, DELETE, OPTIONS");
+            res.status(200).send({
+                success: 'true',
+                message: 'Login get retrieved successfully',
+            })
+})
 
 // export default (app) => {   
-  route.post('/login', (req, res) => {
-    userServices.checkPassword({
-        username: req.body.username,
-        password: req.body.password
+route.post('/processlogin', async (req, res) => {
+    console.log("In Post Login Route, req.body is: ", req.body)
+    let ps = await userServices.checkPassword({
+        username: req.body.user.username,
+        password: req.body.user.password
     })
+    console.log("checkPassword returned: ", ps)
+    // return ps
     .then( async ( resp ) => {
         console.log("In Backend Index post login response. uInfo is: ", resp.uinfo)
         if (resp.success) {       
@@ -37,7 +50,7 @@ let authServices = require('../../services/auth.js');
             res.sendStatus(401)
         }
     })
-  })
+})
 // }
 module.exports = route;
 
