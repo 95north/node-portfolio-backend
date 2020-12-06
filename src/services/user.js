@@ -42,7 +42,7 @@ module.exports = {
           })
           console.log("hash is: ", hash)
           let resp;
-          success: hash === user.encrypted_password ? resp = {success: true, "uinfo" : hash} : resp = {success : false}
+          success: hash === user[0].encrypted_password ? resp = {success: true, "uinfo" : username} : resp = {success : false}
           return { 
             // success: hash === user.encrypted_password,
             // "uinfo" : hash
