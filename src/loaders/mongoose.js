@@ -366,6 +366,7 @@ const createEntry = async (app) => {
         detail: "is the best documentation" 
     });
     await entry.save(); 
+    console.log("in Mongoose.js createEntry(seed), the new entry is: ", entry)
 }
 
 

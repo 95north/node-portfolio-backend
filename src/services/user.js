@@ -30,7 +30,7 @@ module.exports = {
     // was named 'authenticate' orig. 
     checkPassword ({ username, password }) {
       console.log(`Authenticating user:  ${username}`)
-      return knex('user').where({ username: username })
+      return knex('user').where({ username: username })   // need the return here or no server obj ever sent! 
       // knex('user').where({ username: username })
         .then((user) => {
           console.log("In store.authenticate() - user is ", user) 
