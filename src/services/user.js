@@ -31,6 +31,7 @@ module.exports = {
     checkPassword ({ username, password }) {
       console.log(`Authenticating user:  ${username}`)
       return knex('user').where({ username: username })
+      // knex('user').where({ username: username })
         .then((user) => {
           console.log("In store.authenticate() - user is ", user) 
           console.log("In store.authenticate() - user.salt is ", user[0].salt) 
@@ -41,14 +42,36 @@ module.exports = {
             salt: user[0].salt
           })
           console.log("hash is: ", hash)
-          let resp;
-          success: hash === user[0].encrypted_password ? resp = {success: true, "uinfo" : username} : resp = {success : false}
+          // let resp = {header: ""};
+          // resp.header("Access-Control-Allow-Origin", "*");
+          // resp.header("Access-Control-Allow-Headers", "Authorization, Origin, X-Requested-With, Content-Type, Accept");  
+          // resp.header("Access-Control-Allow-Methods", "PATCH, POST, GET, PUT, DELETE, OPTIONS");
+  
+
+          success: hash === user[0].encrypted_password ? resp = {
+            success: true, 
+            "uinfo" : username, 
+            "uId" : user[0].id,
+            // body: user[0].id
+          } : resp = {success : false}
+          // Token added in Routes > Login.js.   within  route.post('/processlogin'...
+          // success: hash === user[0].encrypted_password ? resp = {success: true, "uinfo" : username, "moreUserInfo" : user, "token": "HARD CODED BAD !"} : resp = {success : false}
+
+          // resp.body = {success: true, 
+          //   "uinfo" : username, 
+          //   "uId" : user[0].id,}
+
+            // resp.send({success: true,   // .send() doesn't work here bc not in req/res
+            //   "uinfo" : username, 
+            //   "uId" : user[0].id})
+
           return { 
             // success: hash === user.encrypted_password,
             // "uinfo" : hash
+            // user
             resp
-            // need to return a JWT token as well. 
           }
+
         })
     }
 

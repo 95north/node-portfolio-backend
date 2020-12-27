@@ -1,5 +1,6 @@
 
-var jwt = require('jwt-simple');
+// var jwt = require('jwt-simple');
+var jwt = require('jsonwebtoken');
 // var moment = require('moment');
 // var config = require('../../config');
 var config = { "TOKEN_SECRET" : "terribleSecurity"}
@@ -91,10 +92,16 @@ module.exports = {
 
 
 function generateToken(claims){
-    // const claims = { iss: 'fun-with-jwts', sub: 'AzureDiamond' }
-    const token = jwt.create(claims, config.TOKEN_SECRET)
-    token.setExpiration(new Date().getTime() + 60*1000)
-    return token.compact();
+    // const token = jwt.encode(claims, config.TOKEN_SECRET) // works w jwt-simple... 
+
+    const token = jwt.sign({
+      exp: Math.floor(Date.now() / 1000) + (60 * 60),
+      data: claims
+    }, config.TOKEN_SECRET);
+
+    // const token = jwt.create(claims, config.TOKEN_SECRET)  ".create() is not a function! (for jwt-simple) "
+    // token.setExpiration(new Date().getTime() + 60*1000)
+    return token //.compact();   TypeError: token.compact is not a function
     res.send(token.compact())
 }
 
