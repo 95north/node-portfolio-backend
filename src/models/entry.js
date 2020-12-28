@@ -5,6 +5,7 @@ const entrySchema = new mongoose.Schema(
     { 
         topic: String,
         detail: String,
+        dateAdded: Date
     }
 );
 

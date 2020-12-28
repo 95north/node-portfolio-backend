@@ -162,8 +162,16 @@ const seedMongoDb = async (app) => {
 
 
 
-
-
+// MongoDb  Entry seed data - works!  not creating more now..
+// const createEntry = async (app) => {
+//     const entry = new Entry.Entry({
+//         // const project3 = new models.models.Project({
+//         topic: "Testing",
+//         detail: "is the best documentation" 
+//     });
+//     await entry.save(); 
+//     console.log("in Mongoose.js createEntry(seed), the new entry is: ", entry)
+// }
 
 
 const createProjectSeedData= async () => {
@@ -359,15 +367,7 @@ const processImageUpload = (imgLocation) => {
 
 
 
-const createEntry = async (app) => {
-    const entry = new Entry.Entry({
-        // const project3 = new models.models.Project({
-        topic: "Testing",
-        detail: "is the best documentation" 
-    });
-    await entry.save(); 
-    console.log("in Mongoose.js createEntry(seed), the new entry is: ", entry)
-}
+
 
 
 

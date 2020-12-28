@@ -55,6 +55,26 @@ route.post('/entry', async (req, res) => {
     }
 })
 
+
+route.delete('/entry', async (req, res) => {
+    try {
+        if (authServices.verifyJwtToken()   == true ){//
+            // need to decode req? 
+            // entryServices.addEntry(req) 
+            // res.sendStatus(200)
+            console.log("req in Delete an entry: ", req.body)
+            var result = await entryServices.deleteEntry(req.body) 
+            res.json({body: result});
+            // res.send(result);
+        } else {
+            console.log("JWT Bad")
+            res.status(500).send("JWT Bad");
+        }
+    } catch (error) {
+        res.status(500).send(error);
+    }
+})
+
 // route.get('/userList', (req, res) => {        // http://localhost:7555/api/user/userList
 //   console.log("in Routes > User.js >  userList route is hit!")
 //     userServices.retrieveUserList()
