@@ -1,6 +1,8 @@
 const express = require('express');
 const app = express();    
-const mongoApp = express();    
+const mongoApp = express();  
+var bodyParser = require('body-parser');
+const cors = require("cors");
 
 
 const loadersFile = require('./src/loaders')//.default({ app });
@@ -10,6 +12,28 @@ console.log("loadersFile is : ", loadersFile);
 
 
 async function startServer() {
+
+    mongoApp.use(bodyParser(), function (req, res, next) {      // "Deprecated"
+        next();
+    });
+    mongoApp.use(cors(), function (req, res, next) {      // ****** CHANGE TO ONLY ALLOW CERTAIN ORIGINS!!!!!!
+        next();
+    });
+
+    // mongoApp.use('/foo', function fooMiddleware(req, res, next) {
+    //     // req.url starts with "/foo"
+    //     next();
+    //   });
+    // BELOW: Did not try. 
+    // // parse application/json
+    // app.use(bodyParser.json());                        
+
+    // // parse application/x-www-form-urlencoded
+    // app.use(bodyParser.urlencoded({ extended: true }));
+
+    // // parse multipart/form-data
+    // app.use(multer());
+
     mongoApp.use('/', require('./src/api'));
     console.log("in main index: startServer -Running Loaders now")
     loadersFile.runLoaders({app: app, mongoApp: mongoApp});

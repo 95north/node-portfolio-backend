@@ -20,15 +20,23 @@ var User= require('./user');
 module.exports = {
     generateToken, 
     verifyJwtToken(req, res, next) {
-        // see code pasted below. 
-          if (!req.headers.authorization) {
-            return res.status(401).send({ error: 'TokenMissing' });
+          var token;
+          // see code pasted below. 
+          if (req.headers){                 // this is ugly. any way to refactor? 
+            if (req.headers.authorization) {
+              return res.status(401).send({ error: 'TokenMissing' });
+            }
+            token = req.headers.authorization.split(' ')[1];
+            // jwt.verify(token, secretOrPublicKey, [options, callback])   NEED TO ADD THIS ! 
+          } else {
+            console.log("in Auth, req is : ", req)   // Yes, it's the token. 
+            token = req;
           }
-          var token = req.headers.authorization.split(' ')[1];
 
           var payload = null;
           try {
             payload = jwt.decode(token, config.TOKEN_SECRET);
+            return res.status(200).send({ success: true, note:  "Delete Successful" });
           }
           catch (err) {
             return res.status(401).send({ error: "TokenInvalid" });
@@ -87,9 +95,25 @@ module.exports = {
         //     }
         //   });
         // return null
-    }
-};
+    }, 
+    verifyJwtTokenViaParamsNotHeaders
+}
 
+function verifyJwtTokenViaParamsNotHeaders(token){ 
+  var payload = null;
+  try {
+    payload = jwt.decode(token, config.TOKEN_SECRET); // , [options, callback])
+    console.log("payload is: ", payload)
+    if (jwt.verify(token, config.TOKEN_SECRET) ){
+      return true
+    } else {
+      return false
+    };  }
+  catch (err) {
+    console.log("verifyJwtTokenViaParamsNotHeaders err: ", err)
+    // return res.status(401).send({ error: "TokenInvalid" });
+  }
+}
 
 function generateToken(claims){
     // const token = jwt.encode(claims, config.TOKEN_SECRET) // works w jwt-simple... 
