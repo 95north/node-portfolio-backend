@@ -3,8 +3,8 @@ const URL_MONGODB = "mongodb://localhost:27017/portfoliodb";   // mongodb://<HOS
 // const URL_MONGODB = "mongodb://127.0.0.1.27017/portfoliodb"; 
 const PORT_MONGODB = "27017";  // Redundant??
 const mongoose = require('mongoose');
-// mongoose.set('debug', false); // This toggles whetheg Mongoose.insert()s printed or not!!!
-mongoose.set('debug', true); // This toggles whetheg Mongoose.insert()s printed or not!!!
+mongoose.set('debug', false); // This toggles whetheg Mongoose.insert()s printed or not!!!
+// mongoose.set('debug', true); // This toggles whetheg Mongoose.insert()s printed or not!!!
 var bodyParser = require('body-parser');
 
 const models = require('../models');  

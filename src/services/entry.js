@@ -50,7 +50,7 @@ const Entry = mongoose.model('Entry' );
 
     async function deleteEntry(entryMongoId){     // Need error handling - refactored from try+catch style..
         console.log("in deleteEntry, entryMongoId is ", entryMongoId)
-        let entries; 
+        // let entries; 
         async function processDeletion (){
             // db.collections('quotes').findOneAndDelete(  query,   options,  callback)
             let data = await Entry.findByIdAndDelete(entryMongoId,  function(err, result){  // All callbacks in Mongoose: callback(error, result)
@@ -58,14 +58,15 @@ const Entry = mongoose.model('Entry' );
                     console.log("Error with Entry.find in Services ")
                     // return c//handleError(err);   
                 } else {
-                    // console.log("in getAllEntries, result is: ", result )
+                    console.log("in delete , result is: ", result )
                     // console.log("Services > Entry > allEntries().  Type of result is --", typeof result)
-                    entries = result;
+                    // entries = result;
                     // return entries;
                     null;
                 }
             });
             console.log("in deleteEntry, data  returned is: ", data)
+            return data
             // let result = data.deleteOne();
             // console.log("in deleteEntry, result  returned is: ", result)
 
@@ -76,9 +77,7 @@ const Entry = mongoose.model('Entry' );
 
         let mydata = await processDeletion();
         console.log("my data is: ", mydata)
-        console.log("entries is: ", entries)
-
-        return entries;
+        return mydata;
     }
 
     // async function deleteEntry(entryMongoId){     // Need error handling - refactored from try+catch style..
