@@ -1,7 +1,6 @@
 let route = require('express').Router();
 const authServices = require('../../../src/services/auth.js');
 const entryServices = require('../../../src/services/entry.js'); 
-
 // const store = require('../../../src/loaders/knexfile');  // DON't NEED this- Services/User imports knex connection. 
 
 
@@ -11,19 +10,13 @@ route.post('/entry', async (req, res) => {
     // console.log("req in post new entry: ", req)// .body)  req is huge object.
     try {
         console.log("req.headers.auth: ", req.headers.authorization)
-        // if (authServices.verifyJwtTokenViaParamsNotHeaders(req.params.token)   == true ){//
         if (authServices.verifyJwtTokenViaParamsNotHeaders(req.headers.authorization)   == true ){//
-        // if (authServices.verifyJwtTokenViaParamsNotHeaders(req.params.token)   == true ){//
-            // need to decode req? 
-            // entryServices.addEntry(req) 
             console.log("req.body in post new entry: ", req.body)  // undefined
             // console.log("req.body Type in post new entry: ", typeof req.body)  // Object - therefore auto- Json.parsed!!!
             // let reqBody = JSON.parse(req.body)      // error posting to /entry:  SyntaxError: Unexpected token o in JSON at position 1
             let theResult = await entryServices.addEntry(req.body) 
             console.log("result is: ", theResult)
             res.status(200).json({body: theResult});  // also sends result? 
-            // res.sendStatus(200)
-            // res.json({body: req.body});  // also sends result? 
             // res.send(result);
         } else {
             console.log("JWT Bad")
@@ -36,37 +29,15 @@ route.post('/entry', async (req, res) => {
 })
 
 
-
-
-
-// app.post("/addname", (req, res) => {
-//     var myData = new User(req.body);
-//     myData.save()
-//       .then(item => {
-//         res.send("item saved to database");
-//       })
-//       .catch(err => {
-//         res.status(400).send("unable to save to database");
-//       });
-//   });
-
-
 route.post('/:id', async function (req, res) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    console.log("hit route.delete.  req.params.id is ", req.params.id)
-    // console.log("hit route.delete.  req.params.token is ", req.params.token)
-
-    // console.log("hit route.delete.  req.body is ", req.body)  undefined 
+    // console.log("hit route.delete.  req.params.id is ", req.params.id)
     try {
         if (authServices.verifyJwtTokenViaParamsNotHeaders(req.headers.authorization)   == true ){//
-        // if (authServices.verifyJwtToken(req.params.token)   == true ){//
-            // need to decode req? 
-            // console.log("req in Delete an entry: ", req.body)
-            var result = await entryServices.deleteEntry(req.params.id) 
-            console.log("result is: , result")
-            res.json({body: result});
-            // res.send(result);
+            let result = await entryServices.deleteEntry(req.params.id) 
+            console.log("In Entry Route - result is: ", result)
+            res.status(200).json({body: result});
         } else {
             console.log("JWT Bad")
             res.status(500).send("JWT Bad");
@@ -77,15 +48,13 @@ route.post('/:id', async function (req, res) {
     }
 })
 
+
 route.get('/entries', async function (req, res) {  // ERROR HANDLING! 
     let data = await entryServices.getAllEntries();
-
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Authorization, Origin, X-Requested-With, Content-Type, Accept");  
     res.header("Access-Control-Allow-Methods", "PATCH, POST, GET, PUT, DELETE, OPTIONS");
-
-    // return res.status(200).send({  // how responded in old project
-    res.status(200).send({  // how responded in old project
+    res.status(200).send({  
         success: 'true',
         entries: data,
     })

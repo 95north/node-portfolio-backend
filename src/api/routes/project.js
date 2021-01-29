@@ -4,6 +4,9 @@ let projectController = require('../../services/project.js');
 
     
 
+
+
+
     router.get('/allprojects', async function (req, res) {
         let data = await projectController.allProjects();
         // let data = projectController.allProjects();
@@ -31,6 +34,31 @@ let projectController = require('../../services/project.js');
         })
     });
     
+    router.post('/project', async (req, res) => {
+        // res.header("Access-Control-Allow-Origin", "*");
+        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");   // Just this header - post still doesnt hit. 
+        // console.log("req in post new entry: ", req)// .body)  req is huge object.
+        try {
+            console.log("req.headers.auth: ", req.headers.authorization)
+            if (authServices.verifyJwtTokenViaParamsNotHeaders(req.headers.authorization)   == true ){//
+                console.log("req.body in post new project: ", req.body)  // undefined
+                // console.log("req.body Type in post new entry: ", typeof req.body)  // Object - therefore auto- Json.parsed!!!
+                // let reqBody = JSON.parse(req.body)      // error posting to /entry:  SyntaxError: Unexpected token o in JSON at position 1
+                let theResult = await projectServices.addProject(req.body) 
+                console.log("result is: ", theResult)
+                res.status(200).json({body: theResult});  // also sends result? 
+                // res.send(result);
+            } else {
+                console.log("JWT Bad")
+                res.status(500).send("JWT Bad");
+            }
+        } catch (error) {
+            console.log("error posting to /entry: ", error)
+            res.status(500).send(error);
+        }
+    })
+
+
     
     // need to add one project route here!
     

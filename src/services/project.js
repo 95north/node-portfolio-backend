@@ -10,6 +10,7 @@
 
 const mongoose = require('mongoose');
 const Project = mongoose.model('Project' );
+const projectServices = require('../../../src/services/project.js'); 
 // const Project = require('../models/project.js') // works in mongoose.js ...
 console.log("Project is", Project); // A MongoDb Model, correct! 
 
@@ -45,7 +46,6 @@ async function allProjects(){
 }
 
 
-
 async function aProject (){
     function retrieveAllProjects (){
         let data = Project.findOne() //  function(err, result){  // All callbacks in Mongoose: callback(error, result)
@@ -58,11 +58,29 @@ async function aProject (){
         // });
         // return data; 
         return data
-
     }
     let mydata = await retrieveAllProjects();
     return mydata;
 }
+
+
+async function addProject (){
+    console.log("Has req.body? req param received in addEntry is: ", req);
+    try {
+        let project = new Project({"topic" : req.subject,  "detail": req.detail});
+        project["dateAdded"] = new Date();
+        let result = await project.save();
+        return result
+        // response.send(result);  //  must send from route.post()
+    } catch (error) {
+        console.log("add project error is: ", error)
+        return ({ error : "Error saving project to MongoDb"})
+    }
+    // let mydata = await retrieveAllProjects();
+    // return mydata;
+}
+
+
 
 
 
@@ -83,4 +101,6 @@ async function aProject (){
 // exports.allProjects = allProjects();  // This worked when it was a function.. 
 exports.allProjects = allProjects;
 exports.aProject = aProject;
+exports.addProject = addProject;
+
 // module.exports = router;   // Looks like this blocks allProjects from being exported!!!! 

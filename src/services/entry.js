@@ -16,6 +16,7 @@ const Entry = mongoose.model('Entry' );
         }
     }//, 
 
+
     // async getAllEntries(){
     //     try {
     //     } catch (error) {
@@ -24,6 +25,7 @@ const Entry = mongoose.model('Entry' );
     //         response.status(500).send(error);
     //     }
     // }
+
 
     async function getAllEntries(){     // Need error handling - refactored from try+catch style..
         async function retrieveAllEntries (){
@@ -45,40 +47,27 @@ const Entry = mongoose.model('Entry' );
     }
 
 
-
-
-
     async function deleteEntry(entryMongoId){     // Need error handling - refactored from try+catch style..
         console.log("in deleteEntry, entryMongoId is ", entryMongoId)
-        // let entries; 
+        let entries; 
         async function processDeletion (){
             // db.collections('quotes').findOneAndDelete(  query,   options,  callback)
             let data = await Entry.findByIdAndDelete(entryMongoId,  function(err, result){  // All callbacks in Mongoose: callback(error, result)
                 if (err){
-                    console.log("Error with Entry.find in Services ")
-                    // return c//handleError(err);   
+                    console.log("Error with Entry.find in Services ") 
                 } else {
-                    console.log("in delete , result is: ", result )
-                    // console.log("Services > Entry > allEntries().  Type of result is --", typeof result)
-                    // entries = result;
-                    // return entries;
-                    null;
+                    // console.log("in delete , result is: ", result )
+                    entries = result;
                 }
             });
-            console.log("in deleteEntry, data  returned is: ", data)
-            return data
-            // let result = data.deleteOne();
-            // console.log("in deleteEntry, result  returned is: ", result)
-
-            // return data;  // data = Query Object. 
-
-            // return result;  // data = Query Object. 
+            return entries
         }
 
         let mydata = await processDeletion();
-        console.log("my data is: ", mydata)
-        return mydata;
+        // console.log("my data is: ", mydata)   // is same as entries, OK
+        return entries;
     }
+
 
     // async function deleteEntry(entryMongoId){     // Need error handling - refactored from try+catch style..
     //     console.log("in deleteEntry, entryMongoId is ", entryMongoId)
@@ -103,8 +92,6 @@ const Entry = mongoose.model('Entry' );
     //     let mydata = await processDeletion();
     //     return mydata;
     // }
-
-
 
 
 exports.addEntry = addEntry;
