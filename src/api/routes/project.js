@@ -46,7 +46,7 @@ const authServices = require('../../../src/services/auth.js');
                 // console.log("req.body Type in post new entry: ", typeof req.body)  // Object - therefore auto- Json.parsed!!!
                 // let reqBody = JSON.parse(req.body)      // error posting to /entry:  SyntaxError: Unexpected token o in JSON at position 1
                 let theResult = await projectServices.addProject(req)//body) 
-                console.log("result is: ", theResult)
+                console.log("Routes> Project:  await addProject result is: ", theResult)
                 res.status(200).json({body: theResult});  // also sends result? 
                 // res.send(result);
             } else {

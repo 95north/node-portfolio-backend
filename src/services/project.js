@@ -14,6 +14,7 @@ console.log("Project is", Project); // A MongoDb Model, correct!
 // const Project = require('../models/project.js') // works in mongoose.js ...
 // const Project = exports.Project;
 const fs = require('fs');
+var atob = require('atob');
 const Binary = require('mongodb').Binary;
 
 
@@ -64,17 +65,28 @@ async function aProject (){
 }
 
 
-async function addProject (req){
+
+
+
+
+
+
+addProject = async (req) => {
     // console.log("Has req.body? req param received in addProj is: ", req.body);  //  req=IncomingMessage { _readableState: ReadableState {
     //  WORKS !! Get Body: is an array containing a string: '�PNG\r' + '\n\u001a\n\u0000\u0000\u0000\r' +
 
-    let image = await processImageUpload(req.body[0])
-    // console.log("image is: ", image.slice(0, 300))
+    // let image = await processImageUpload(req.body[0])
+    // let images = []
+    // let numberOfImages = req.body.length
+    // for (let i=0; i<numberOfImages; i++) {     // is not a function or its return value is not iterable
+    //     let img = await processImageUpload(req.body[i])
+    //     images.push(img)
+    // }    
     
+    let images = await processImageArray(req)
+    console.log("in main addProject, images arr is: ", images )
+
     // for (var key of req.body.images.entries()) {     // is not a function or its return value is not iterable
-    //     console.log(key[0] + ', ' + key[1]);
-    // }
-    // for (var key of data.entries()) {
     //     console.log(key[0] + ', ' + key[1]);
     // }
 
@@ -82,12 +94,12 @@ async function addProject (req){
         let project = new Project({
             // "topic" : req.subject,  
             // "detail": req.detail
-            "name": req.name,
-            "description": req.description,
-            "link": req.link,
-            "languages": req.languages,
-            "year": req.year,
-            "images": image
+            "name": req.body.name ? req.body.name : "None !",
+            "description": req.body.description ? req.body.description : "None !",
+            "link": req.body.link ? req.body.link : "None !",
+            "languages": req.body.languages ? req.body.languages : "None !",
+            "year": req.body.year ? req.body.year : 2050 ,
+            "images": images
             // "images": req.images
         });
         project["dateAdded"] = new Date();
@@ -104,135 +116,135 @@ async function addProject (req){
 
 
 
+// req.body is a string obj - JSONified 
+processImageArray = async (req) => {
+    let images = []
+    let numberOfImages = req.body.length
 
-const processImageUpload = (base64Img) => {
+    // console.log("req.body", req.body)      // 'data:image/png;base64,iVBORw0KGgoA ... 
+    console.log("----typeof req.body", typeof req.body)     // Obj
+    console.log("----keys in req.body", Object.keys(req.body) );    // Object éArray Iteratorê äü
+    console.log("----# keys in req.body", Object.keys(req.body).length );    // 1
+    // console.log("req.body[Array]", req.body["Array"] );    // Object éArray Iteratorê äü
+    // let reqBody = JSON.parse(req.body)              //   SyntaxError: Unexpected token d in JSON at position 0
+    // console.log("typeof reqBody (parsed JSON)", typeof reqBody) 
+
+    for (let i=0; i<numberOfImages; i++) {     // is not a function or its return value is not iterable
+        let img = await processImageUpload(req.body[i])    /// REFACTOR BODY TO HAVE >1 IMG
+        images.push(img)
+    }    
+    return images
+    
+}
+
+
+
+
+processImageUpload = async (base64Img) => {   // convert base64Img file (str),  to  buffer,  to binary. 
     let decodedImage = "Default val no good";
-    // ??? best practice was to store image location and other such metadata to the DB and store the image file to disk.
-    // base64 encode the image, 
-    // then store it using mongo's BinData type. 
-    // As I understand, that will save as BSON bit array, 
-    // not actually store the base64 string, so the size won't grow larger than your original binary image.
-    // It will display in json queries as a base64 string.
-
-    // https://stackoverflow.com/questions/52285059/when-storing-binary-data-in-mongodb-is-it-stored-as-binary-or-base64-internally
-    // <bindata> is "the base64 representation of a binary string", according to this: BSON Data Types and Associated Representations - Binary
+    console.log("processImageUpload - typeof base64Img : ", typeof base64Img)   // string
 
 
-    // Binary() - constructor - A class representation of the BSON Binary type. (from MongoDB)
-    // Arguments:       buffer (buffer) – a buffer object containing the binary data.
-    // Argument2:       [subType] (number) – the option binary type
-    // https://mongodb.github.io/node-mongodb-native/api-bson-generated/binary.html
+    let file = await readBase64ImgFile(base64Img);   // returns a buffer
 
-    // var img = fs.readFileSync(imgLocation);     // const fs = require('fs');
-    // errno: -63,
-    // syscall: 'open',
-    // code: 'ENAMETOOLONG',
-    // path: 'data:image/png;base64,iVBORw0KGgoAAAANSUhE
 
-    
-    // fs.readFile(image_origial, function(err, original_data){
-    fs.readFile(base64Img, async function(err, base64Img){
-        console.log("base64img is: ", base64Img);
-        // var decodedImage = new Buffer(base64Img, 'base64').toString('binary');
-        decodedImage = await new Buffer.from(base64Img).toString('binary');
 
-        // error posting to /project:  Error: ENAMETOOLONG: name too long, open 'data:image/png;base64,iVBORw0KGgoAAAANS
-
-        console.log("decodedImage  img is : ", decodedImage);  //  uploaded img is :  <Buffer 89 50 4e 47 0d 
-        // console.log("uploaded img is : ", img);  //  uploaded img is :  <Buffer 89 50 4e 47 0d 
-
-        fs.writeFile('image_decoded.jpg', decodedImage, function(err) {console.log("processImageUpload writefile err: ", err)});
-    });
-    // fs.readFile(image_origial, function(err, original_data){
-    //     fs.writeFile('image_orig.jpg', original_data, function(err) {});
-    //     var base64Image = new Buffer(original_data, 'binary').toString('base64');
-    //     var decodedImage = new Buffer(base64Image, 'base64').toString('binary');
-    //     fs.writeFile('image_decoded.jpg', decodedImage, function(err) {});
+    // fs.readFile(base64Img, async function(err, base64Img){
+    //     console.log("base64img is: ", base64Img);
+    //     decodedImage = await new Buffer.from(base64Img).toString('binary');
+    //     fs.writeFile('image_decoded.jpg', decodedImage, function(err) {console.log("processImageUpload writefile err: ", err)});
     // });
+    console.log("processImageUpload - typeof file : ", typeof file)  // obj
+    console.log("processImageUpload - file instanceof Buffer  : ", file instanceof Buffer )  // obj
+    console.log("processImageUpload - file instanceof Binary (testing atob(base64str); )  : ", file instanceof Binary )  // obj
 
+    console.log("processImageUpload - file length : ", file.length)  // string
 
-
-    // error posting to /project:  TypeError [ERR_INVALID_ARG_VALUE]: 
-    // The argument 'path' must be a string or Uint8Array without null bytes. 
-    // Received '�PNG\r' +
-    // '\n\u001a\n\u0000\u0000\u0000\r' +
-    // 'IHDR\u0000\u0000\u0002.\u0000\u0000\u0002T\b\u0006\u0000\u0000\u00002�x\u0000...
-    //   at Object.readFileSync (fs.js:333:35)
-
-
-    // print it out so you can check that the file is loaded correctly
-    // console.log("Loading image file");
-    // console.log("uploaded img is : ", img);  //  uploaded img is :  <Buffer 89 50 4e 47 0d 
-    
-
-    // return img  // what if just return Buffer instead? 
 
     var imageBin = {};
-    // imageBin.bin = Binary(img);                 // const Binary = require('mongodb').Binary;
-    imageBin.bin = Binary(decodedImage);                 // const Binary = require('mongodb').Binary;
+    imageBin.bin = await  Binary(file);                 // const Binary = require('mongodb').Binary;
+    // imageBin.bin = await  Binary(decodedImage);                 // const Binary = require('mongodb').Binary;
 
-    // console.log("type of imageBin.bin is : ", typeof imageBin.bin) // "object"
+
     console.log("imageBin.bin is instance of Binary? : ", imageBin.bin instanceof Binary) // true
-    // console.log("length de invoice.bin= "+ imageBin.bin.length());
-    // console.log("Buffer.isEncoding(utf8) :", Buffer.isEncoding("utf8")) // returns true for both utf8 and binary.... 
-    // console.log("Buffer.isEncoding(binary) :", Buffer.isEncoding("binary"))  // returns true for both utf8 and binary.... 
-    return imageBin.bin
+    console.log("imageBin.bin is  : ", imageBin.bin )   //object
+    console.log("imageBin.bin KEYS is  : ", Object.keys(imageBin.bin) )   //object
+    // console.log("imageBin.bin[0] is  : ", imageBin.bin["0"] )   // undefined
+    console.log("imageBin.bin[0] is  : ", imageBin.bin["buffer"] )   // WORKS
+
+
+    console.log("typeof imageBin.bin is  : ", typeof imageBin.bin )
+
+    // console.log("imageBin.bin.Binary.buffer is  : ", imageBin.bin[0].buffer )
+
+    // SHOULD BE: imageBin.bin is: = �PNG
+    // IHDR�{���
+    //          %iCCPICC ProfileH���TS���$$$�@����^�R	$���YTp-��`EWD]
+    // ��������R@W�{������?��e2w�                                      �
+    //                           �1l�(�G�'�
+    // dNLNa�X;6G"
+    // ���P����wס5�+�2_?��W���$��i\	'�Ap7�H����f� a�@[
+
+    
+    return imageBin.bin["buffer"]
     // What gets inserted into MongoDB: 
     //  images: [ 'BinData(0, ' + '"iVBORw0KGgoAAAANSUhEUgAABmwAAAQoCAYAAAAHVfHnAAAMJWlDQ1BJQ0MgUHJvZmlsZQAASImVlwdUU8kagOeWJCQktEAEpITeBJFepNcIAlIFGyEJJJQYEoKKHVlUcC2oiGBFV0....
 }       // ends  processImageUpload
 
 
-
-
-const deadcode_processImageUpload = (imgLocation) => {
-    // ??? best practice was to store image location and other such metadata to the DB and store the image file to disk.
-    // base64 encode the image, 
-    // then store it using mongo's BinData type. 
-    // As I understand, that will save as BSON bit array, 
-    // not actually store the base64 string, so the size won't grow larger than your original binary image.
-    // It will display in json queries as a base64 string.
-
-    // https://stackoverflow.com/questions/52285059/when-storing-binary-data-in-mongodb-is-it-stored-as-binary-or-base64-internally
-    // <bindata> is "the base64 representation of a binary string", according to this: BSON Data Types and Associated Representations - Binary
-
-
-    // Binary() - constructor - A class representation of the BSON Binary type. (from MongoDB)
-    // Arguments:       buffer (buffer) – a buffer object containing the binary data.
-    // Argument2:       [subType] (number) – the option binary type
-    // https://mongodb.github.io/node-mongodb-native/api-bson-generated/binary.html
-
-    var img = fs.readFileSync(imgLocation);     // const fs = require('fs');
-    // error posting to /project:  TypeError [ERR_INVALID_ARG_VALUE]: 
-    // The argument 'path' must be a string or Uint8Array without null bytes. 
-    // Received '�PNG\r' +
-    // '\n\u001a\n\u0000\u0000\u0000\r' +
-    // 'IHDR\u0000\u0000\u0002.\u0000\u0000\u0002T\b\u0006\u0000\u0000\u00002�x\u0000...
-    //   at Object.readFileSync (fs.js:333:35)
-
-
-    // print it out so you can check that the file is loaded correctly
-    // console.log("Loading image file");
-    console.log("uploaded img is : ", img);  //  uploaded img is :  <Buffer 89 50 4e 47 0d 
+readBase64ImgFile = (base64Img) => {   // returns a buffer
     
+    let decodedImage = null;
 
-    // return img  // what if just return Buffer instead? 
+    let buff = new Buffer(base64Img.slice(21), 'base64');   // data:image/png;base64,  remove 1st 22 chars. 
+    decodedImage = buff.toString('ascii');
 
-    var imageBin = {};
-    imageBin.bin = Binary(img);                 // const Binary = require('mongodb').Binary;
-    // console.log("type of imageBin.bin is : ", typeof imageBin.bin) // "object"
-    console.log("imageBin.bin is instance of Binary? : ", imageBin.bin instanceof Binary) // true
-    // console.log("length de invoice.bin= "+ imageBin.bin.length());
-    // console.log("Buffer.isEncoding(utf8) :", Buffer.isEncoding("utf8")) // returns true for both utf8 and binary.... 
-    // console.log("Buffer.isEncoding(binary) :", Buffer.isEncoding("binary"))  // returns true for both utf8 and binary.... 
-    return imageBin.bin
-    // What gets inserted into MongoDB: 
-    //  images: [ 'BinData(0, ' + '"iVBORw0KGgoAAAANSUhEUgAABmwAAAQoCAYAAAAHVfHnAAAMJWlDQ1BJQ0MgUHJvZmlsZQAASImVlwdUU8kagOeWJCQktEAEpITeBJFepNcIAlIFGyEJJJQYEoKKHVlUcC2oiGBFV0....
-}       // ends  processImageUpload
+    
+    
+    // fs.readFile(base64Img, async function(base64Img, err){  // base64img is:  éError: ENAMETOOLONG: name too long, open 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA
+    
+    // fs.readFile(base64Img, 'base64', async function(err, base64Img2){  // base64img is:  éError: ENAMETOOLONG: name too long, open 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA
+    // //  The "path" argument must be one of type string, Buffer, or URL. Received type object
+    // // fs.readFile(image_origial, function(err, original_data){
+        //     // // This tells node to load the file into a Buffer 'original_data' because you
+        //     // // have not specified an encoding for the returned values. If you provided an
+        //     // // encoding, then original_data would be a string with that encoding.
+        
+        //     console.log("base64img is: ", base64Img2);    // undefined!!!!! 
+        //     decodedImage = await Buffer.from(base64Img2, 'base64'); // got rid of new keyword
+        //     decodedImage = decodedImage.toString('binary');
+        
+        
+        //     fs.writeFile('image_decoded.jpg', decodedImage, function(err) {console.log("processImageUpload writefile err: ", err)});
+        // });
+        
+        // readFile expects a file path...
+        // decodedImage = fs.readFile(base64Img,  async function (err, data) {
+            // decodedImage = fs.readFile(base64Img, {encoding: 'base64'}, async function (err, data) {   // errno: -63, code: 'ENAMETOOLONG',
+            //     console.log ("decodedImage err is: ", err)
+            //  The "path" argument must be one of type string, Buffer, or URL. Received type object
+            // fs.readFile(image_origial, function(err, original_data){
+                // // This tells node to load the file into a Buffer 'original_data' because you
+                // // have not specified an encoding for the returned values. If you provided an
+                // // encoding, then original_data would be a string with that encoding.
+                
+                // console.log("base64img is: ", base64Img2); // undefined!!!!! 
+                // decodedImage = await Buffer.from(base64Img2, 'base64'); // got rid of new keyword
+                // decodedImage = decodedImage.toString('binary');
+                
+                
+                // fs.writeFile('image_decoded.jpg', decodedImage, function (err) { console.log("processImageUpload writefile err: ", err); });
+                
+                // });
+                // atob(): decodes a base64 encoded string("atob" should be read as "ASCII to binary").
+                // return atob(base64Img);   // NOPE. returns neither Binary nor Buffer typeof. 
 
-
-
-
-
+                return buff;
+                return decodedImage;
+            }
+            
+            
+            
 
 
 

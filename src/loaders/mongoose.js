@@ -287,6 +287,17 @@ const processImageUpload = (imgLocation) => {
     // console.log("type of imageBin.bin is : ", typeof imageBin.bin) // "object"
     console.log("imageBin.bin is instance of Binary? : ", imageBin.bin instanceof Binary) // true
     // console.log("length de invoice.bin= "+ imageBin.bin.length());
+    // console.log("imageBin.bin is: = "+ imageBin.bin);
+
+    // imageBin.bin is: = �PNG
+    // IHDR�{���
+    //          %iCCPICC ProfileH���TS���$$$�@����^�R	$���YTp-��`EWD]
+    // ��������R@W�{������?��e2w�                                      �
+    //                           �1l�(�G�'�
+    // dNLNa�X;6G"
+    // ���P����wס5�+�2_?��W���$��i\	'�Ap7�H����f� a�@[
+
+
     // console.log("Buffer.isEncoding(utf8) :", Buffer.isEncoding("utf8")) // returns true for both utf8 and binary.... 
     // console.log("Buffer.isEncoding(binary) :", Buffer.isEncoding("binary"))  // returns true for both utf8 and binary.... 
     return imageBin.bin
