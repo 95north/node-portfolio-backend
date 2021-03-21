@@ -33,7 +33,7 @@ module.exports = {
       return knex('user').where({ username: username })   // need the return here or no server obj ever sent! 
       // knex('user').where({ username: username })
         .then((user) => {
-          console.log("In store.authenticate() - user is ", user) 
+          // console.log("In store.authenticate() - user is ", user) 
           console.log("In store.authenticate() - user.salt is ", user[0].salt) 
 
           if (!user) return { success: false }

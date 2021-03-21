@@ -13,7 +13,7 @@ console.log("loadersFile is : ", loadersFile);
 
 async function startServer() {
 
-    mongoApp.use(bodyParser(), function (req, res, next) {      // "Deprecated"
+    mongoApp.use(bodyParser({limit: '50mb'}), function (req, res, next) {      // "Deprecated"
         next();
     });
     mongoApp.use(cors(), function (req, res, next) {      // ****** CHANGE TO ONLY ALLOW CERTAIN ORIGINS!!!!!!

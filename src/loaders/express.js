@@ -10,7 +10,7 @@ exports.connectExpressWebServer = async (app) => {
     console.log("Hello from Express loader")
     // console.log("the app Parameter for express loader is: ", app);
     expressWebServerApp.use(express.static('public'))
-    expressWebServerApp.use(bodyParser.json())
+    expressWebServerApp.use(bodyParser.json())    // {limit: '50mb'}  ???  need? express server does login stuff. 
     // app.use(BodyParser.urlencoded({ extended: true }));    // What is this for? is in addition to app.use(bodyParser.json())
     // app.use(cors())    Don't need anymore - 
     // app.use(config.api.prefix, routes());

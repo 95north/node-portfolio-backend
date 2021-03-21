@@ -1,13 +1,14 @@
 // import { Router, Request, Response, NextFunction } from 'express';
 let router = require('express').Router();
 let projectController = require('../../services/project.js');
+// const projectServices = require('../../services/project.js'); 
+const projectServices = require('../../../src/services/project.js'); 
+const authServices = require('../../../src/services/auth.js');    
 
-    
 
 
 
-
-    router.get('/allprojects', async function (req, res) {
+    router.get('/allprojects', async function (req, res) {              //this route works!  
         let data = await projectController.allProjects();
         // let data = projectController.allProjects();
         // let data;
@@ -34,17 +35,17 @@ let projectController = require('../../services/project.js');
         })
     });
     
-    router.post('/project', async (req, res) => {
+    router.post('/project', async(req, res) => {
         // res.header("Access-Control-Allow-Origin", "*");
         res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");   // Just this header - post still doesnt hit. 
         // console.log("req in post new entry: ", req)// .body)  req is huge object.
         try {
-            console.log("req.headers.auth: ", req.headers.authorization)
+            console.log("PROJECT ROUTES: req.headers.auth: ", req.headers.authorization)
             if (authServices.verifyJwtTokenViaParamsNotHeaders(req.headers.authorization)   == true ){//
-                console.log("req.body in post new project: ", req.body)  // undefined
+                // console.log("req.body in post new project: ", req.body)  // an array of strings @ 2021-Mar-21
                 // console.log("req.body Type in post new entry: ", typeof req.body)  // Object - therefore auto- Json.parsed!!!
                 // let reqBody = JSON.parse(req.body)      // error posting to /entry:  SyntaxError: Unexpected token o in JSON at position 1
-                let theResult = await projectServices.addProject(req.body) 
+                let theResult = await projectServices.addProject(req)//body) 
                 console.log("result is: ", theResult)
                 res.status(200).json({body: theResult});  // also sends result? 
                 // res.send(result);
@@ -53,7 +54,7 @@ let projectController = require('../../services/project.js');
                 res.status(500).send("JWT Bad");
             }
         } catch (error) {
-            console.log("error posting to /entry: ", error)
+            console.log("error posting to /project: ", error)
             res.status(500).send(error);
         }
     })
